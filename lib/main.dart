@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Firebase Demo',
+      title: 'Catsin Admin',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),

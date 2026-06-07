@@ -10,17 +10,26 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _firestore = FirebaseFirestore.instance;
-  final _dataController = TextEditingController();
+  final _namaKucingController = TextEditingController();
+  final _vaksinController = TextEditingController();
+  final _tanggalController = TextEditingController();
   void _addData() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null && _dataController.text.isNotEmpty) {
-      await _firestore.collection('user_data').add({
-        'text': _dataController.text,
+    if (user != null &&
+        _namaKucingController.text.isNotEmpty &&
+        _vaksinController.text.isNotEmpty &&
+        _tanggalController.text.isNotEmpty) {
+      await _firestore.collection('vaksin_kucing').add({
+        'namaKucing': _namaKucingController.text,
+        'jenisVaksin': _vaksinController.text,
+        'tanggal': _tanggalController.text,
         'createdAt': Timestamp.now(),
         'userId': user.uid,
         'userEmail': user.email,
       });
-      _dataController.clear();
+      _namaKucingController.clear();
+      _vaksinController.clear();
+      _tanggalController.clear();
     }
   }
 
@@ -29,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Beranda & Data'),
+        title: const Text('Catsin'),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
@@ -45,17 +54,37 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text('Selamat datang, ${user?.email ?? 'Pengguna'}!'),
             const SizedBox(height: 20),
+            // Masukan nama kucing
             TextField(
-              controller: _dataController,
+              controller: _namaKucingController,
               decoration: const InputDecoration(
-                labelText: 'Masukkan data baru',
+                labelText: 'Masukkan nama kucing',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Masukan jenis vaksin
+            TextField(
+              controller: _vaksinController,
+              decoration: const InputDecoration(
+                labelText: 'Masukkan jenis vaksin',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Masukan tanggal vaksin
+            TextField(
+              controller: _tanggalController,
+              decoration: const InputDecoration(
+                labelText: 'Masukkan tanggal vaksin',
+                hintText: '07/06/2026',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _addData,
-              child: const Text('Simpan Data'),
+              child: const Text('Simpan Data Vaksin'),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -65,9 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _firestore
-                    .collection('user_data')
-                    .where('userId', isEqualTo: user?.uid)
-                    .orderBy('createdAt', descending: true)
+                    .collection('vaksin_kucing')
+                    // .where('userId', isEqualTo: user?.uid)
+                    // .orderBy('createdAt', descending: true)
                     .snapshots(),
                 builder: (ctx, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -87,13 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         child: ListTile(
-                          title: Text(data['text']),
+                          title: Text(data['namaKucing']),
                           subtitle: Text(
-                            data['userEmail'] +
-                                ' - ' +
-                                (data['createdAt'] as Timestamp)
-                                    .toDate()
-                                    .toString(),
+                            'Vaksin: ${data['jenisVaksin']}\n'
+                            'Tanggal: ${data['tanggal']}',
                           ),
                         ),
                       );

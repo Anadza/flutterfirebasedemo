@@ -48,7 +48,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isLogin ? 'Login' : 'Registrasi'),
+        title: Text(_isLogin ? 'Selamat Datang di Catsin' : 'Registrasi Admin Catsin'),
       ),
       body: Center(
         child: Card(
